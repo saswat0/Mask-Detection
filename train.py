@@ -18,7 +18,7 @@ from torch.optim import Adam
 from torch.optim.optimizer import Optimizer
 from torch.utils.data import DataLoader
 
-from .dataset import MaskDataset
+from dataset import MaskDataset
 
 
 class MaskDetector(pl.LightningModule):
