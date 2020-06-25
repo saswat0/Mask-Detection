@@ -6,6 +6,7 @@ import click
 import cv2
 import torch
 from skvideo.io import FFmpegWriter, vreader
+from skimage.io import ImageCollection
 from torchvision.transforms import Compose, Resize, ToPILImage, ToTensor
 
 from common.facedetector import FaceDetector
@@ -17,15 +18,15 @@ from train import MaskDetector
                     videoPath: path to video file to annotate
                     """)
 @click.argument('modelpath')
-@click.argument('videopath')
 @click.option('--output', 'outputPath', type=Path,
               help='specify output path to save video with annotations')
 @torch.no_grad()
-def tagVideo(modelpath, videopath, outputPath=None):
+
+def tagVideo(modelpath, outputPath=None):
     """ detect if persons in video are wearing masks or not
     """
     model = MaskDetector()
-    model.load_state_dict(torch.load(modelpath)['state_dict'], strict=False)
+    model.load_state_dict(torch.load(modelpath, map_location={'cuda:0': 'cpu'})['state_dict'], strict=False)
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
@@ -49,7 +50,10 @@ def tagVideo(modelpath, videopath, outputPath=None):
     cv2.namedWindow('main', cv2.WINDOW_NORMAL)
     labels = ['No mask', 'Mask']
     labelColor = [(10, 0, 255), (10, 255, 0)]
-    for frame in vreader(str(videopath)):
+
+    v = cv2.VideoCapture(0)
+    while True:
+        frame = v.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         faces = faceDetector.detect(frame)
         for face in faces:
