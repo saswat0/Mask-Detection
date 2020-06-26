@@ -53,8 +53,8 @@ def tagVideo(modelpath, outputPath=None):
 
     v = cv2.VideoCapture(0)
     while True:
-        frame = v.read()
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        _, frame = v.read()
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         faces = faceDetector.detect(frame)
         for face in faces:
             xStart, yStart, width, height = face
