@@ -6,6 +6,11 @@ git clone https://github.com/saswat0/Mask-Detection.git
 cd Mash-Detection
 ```
 
+**For testing on PyTorch Model**
+```bash
+python test.py
+```
+
 # Download dataset and export it to pandas DataFrame
 ```
 python data_preparation
